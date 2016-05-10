@@ -23,7 +23,7 @@ public class wiConsole : System.Web.Services.WebService
     //wiUser Methods
     
     [WebMethod]
-    public bool wiRegister(string name, string surname, string username, string passwd, int genderId)
+    public bool wiRegister(string name, string surname, string username, string passwd, string genderId)
     {
         bool valid = false;
 
@@ -41,7 +41,7 @@ public class wiConsole : System.Web.Services.WebService
             cmd.Parameters.AddWithValue("@surname", surname);
             cmd.Parameters.AddWithValue("@username", username);
             cmd.Parameters.AddWithValue("@passwd", passwd);
-            cmd.Parameters.AddWithValue("@genderId", genderId);
+            cmd.Parameters.AddWithValue("@genderId", (int)genderId);
 
             cmd.ExecuteNonQuery();
 
