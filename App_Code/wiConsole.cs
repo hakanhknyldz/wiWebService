@@ -41,7 +41,7 @@ public class wiConsole : System.Web.Services.WebService
             cmd.Parameters.AddWithValue("@surname", surname);
             cmd.Parameters.AddWithValue("@username", username);
             cmd.Parameters.AddWithValue("@passwd", passwd);
-            cmd.Parameters.AddWithValue("@genderId", (int)genderId);
+            cmd.Parameters.AddWithValue("@genderId", int.Parse(genderId));
 
             cmd.ExecuteNonQuery();
 
@@ -104,16 +104,32 @@ public class wiConsole : System.Web.Services.WebService
     /// <param name="genderType"></param>
     /// <returns></returns>
    [WebMethod]
-   public string wiGetClothes(string catName , string genderType)
+   public string wiGetClothes(string catName1, string catName2,string catName3 , string genderType)
     {
-        int catId = wiDB.getCatId(catName);
-        int genderId = wiDB.getGenderId(genderType);
+        String query = "SELECT Clothes.* FROM wiClothes AS Clothes INNER JOIN wiGender AS Gender"+ 
+            "ON Clothes.genderId = Gender.genderId INNER JOIN wiCategory AS Category"+
+            "ON Clothes.catId = Category.catId"+
+            "WHERE Gender.genderType = "+ genderType +" ";
+       
+
+        if(String.IsNullOrEmpty(catName2)) //only get catName1's
+        {
+            query += "Category.catName = " + catName1 + "";
+        }
+        else if(!String.IsNullOrEmpty(catName2) && String.IsNullOrEmpty(catName3))
+        {//get catName1's AND catName2's
+            query += "(Category.catName = " + catName1 + " OR Category.catName = " + catName2 +")";
+
+        }
+        else if (!String.IsNullOrEmpty(catName2) && !String.IsNullOrEmpty(catName3))
+        {
+            //get cat1,cat2,cat3's 
+            query += "(Category.catName = " + catName1 + " OR Category.catName = " + catName2 + " OR Category.catName = " + catName3 + ")";
+        }
 
         wiClothes clothes = null;
         wiClothes[] clothesArray = null;
-
-        string query = "select * from wiClothes where catId = " + catId + " and genderId = "+ genderId;
-            
+   
         DataTable dt = wiDB.getDataTable(query);
         if(dt != null)
         {

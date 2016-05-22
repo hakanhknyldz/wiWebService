@@ -25,7 +25,7 @@ public partial class addPhoto : System.Web.UI.Page
         if (FileUploadPhoto.HasFile)
         {
             string imgName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + FileUploadPhoto.FileName.ToString();
-            string wiPath = "~/Admin/Weather/" + imgName;
+            string wiPath = "~/images/" + imgName;
 
             FileUploadPhoto.SaveAs(Server.MapPath(wiPath));
             try
@@ -35,7 +35,7 @@ public partial class addPhoto : System.Web.UI.Page
                     if (FileUploadPhoto.PostedFile.ContentLength < 1048576)
                     {
                         
-                        ExecuteInsert(wiPath, tbUrl.Text);
+                        ExecuteInsert(imgName, tbUrl.Text);
 
                         lblSuccess.Text = "Başarılı";
 
@@ -58,20 +58,20 @@ public partial class addPhoto : System.Web.UI.Page
     {
         return DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + Guid.NewGuid().ToString("N");
     }
-    private void ExecuteInsert(string wiPath,string wiUrl)
+    private void ExecuteInsert(string imgName,string wiUrl)
     {
 
         SqlConnection conn = wiDB.connect();
 
-        int catId = wiDB.getCatId(ddlCategory.SelectedValue);
-        int genderId = wiDB.getGenderId(ddlGender.SelectedValue);
+        int catId = int.Parse(ddlCategory.SelectedValue);
+        int genderId = int.Parse(ddlGender.SelectedValue);
 
         string query = "insert into wiClothes values(@wiPath,@wiUrl,@catId,@genderId)";
         //string old_query = "INSERT INTO Weather (name, path, category, gender) VALUES(@name,@path,@category, @gender)";
         try
         {
             SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@wiPath", wiPath);
+            cmd.Parameters.AddWithValue("@wiPath", imgName);
             cmd.Parameters.AddWithValue("@wiUrl", wiUrl);
             cmd.Parameters.AddWithValue("@catId", catId);
             cmd.Parameters.AddWithValue("@genderId", genderId);
